@@ -1,7 +1,11 @@
 #include <iostream>
 
+#include "app.h"
+#include "global.h"
+
 int main()
-{
-    std::cout << "test";
-    return 0;
+{	
+	app.initialize();
+	app.mainloop();
+	app.cleanup();
 }
