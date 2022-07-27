@@ -1,7 +1,10 @@
 #pragma once
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+
+#include <vector>
 
 class App
 {
@@ -12,9 +15,23 @@ public:
 	float last_frame = 0.0f;
 	float delta_time = 0.0f;
 
-	void initialize();
+	std::vector<float> verts;
+
+	GLuint shader;
+	GLuint vao;
+	GLuint vbo;
+
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 projection;
+
+	void setup();
 	void mainloop();
 	void cleanup();
+
+	void update();
+	void upload();
+	void draw();
 };
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);

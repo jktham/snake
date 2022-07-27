@@ -5,7 +5,7 @@
 
 int main()
 {	
-	app.initialize();
+	app.setup();
 	app.mainloop();
 	app.cleanup();
 }
