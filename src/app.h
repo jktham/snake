@@ -1,5 +1,7 @@
 #pragma once
 
+#include "game.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -10,28 +12,23 @@ class App
 {
 public:
 	GLFWwindow* window;
+	glm::ivec2 size = glm::ivec2(1920, 1080);
 
 	float current_frame = 0.0f;
 	float last_frame = 0.0f;
 	float delta_time = 0.0f;
 
-	std::vector<float> verts;
-
-	GLuint shader;
-	GLuint vao;
-	GLuint vbo;
-
-	glm::mat4 model;
-	glm::mat4 view;
-	glm::mat4 projection;
+	std::vector<Game> games;
+	int gameCount = 20;
 
 	void setup();
 	void mainloop();
 	void cleanup();
 
-	void update();
-	void upload();
-	void draw();
+	void initGames();
+	void updateGames();
+	void uploadGames();
+	void drawGames();
 };
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);

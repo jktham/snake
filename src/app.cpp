@@ -18,12 +18,12 @@ void App::setup()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
-	window = glfwCreateWindow(1920, 1080, "snake", NULL, NULL);
+	window = glfwCreateWindow(size.x, size.y, "snake", NULL, NULL);
 	glfwSetWindowPos(window, 100, 100);
 	glfwMakeContextCurrent(window);
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
-	glViewport(0, 0, 1920, 1080);
+	glViewport(0, 0, size.x, size.y);
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -47,42 +47,7 @@ void App::setup()
 	glfwSwapInterval(0);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-	const char *vert_source;
-	std::ifstream vert_file("res/shaders/shader.vs");
-	std::string vert_string((std::istreambuf_iterator<char>(vert_file)), std::istreambuf_iterator<char>());
-	vert_source = vert_string.c_str();
-
-	GLuint vert_shader;
-	vert_shader = glCreateShader(GL_VERTEX_SHADER);
-
-	glShaderSource(vert_shader, 1, &vert_source, NULL);
-	glCompileShader(vert_shader);
-
-	const char *frag_source;
-	std::ifstream frag_file("res/shaders/shader.fs");
-	std::string frag_string((std::istreambuf_iterator<char>(frag_file)), std::istreambuf_iterator<char>());
-	frag_source = frag_string.c_str();
-
-	GLuint frag_shader;
-	frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	glShaderSource(frag_shader, 1, &frag_source, NULL);
-	glCompileShader(frag_shader);
-
-	shader = glCreateProgram();
-	glAttachShader(shader, vert_shader);
-	glAttachShader(shader, frag_shader);
-	glLinkProgram(shader);
-
-	glDeleteShader(vert_shader);
-	glDeleteShader(frag_shader);
-	
-	model = glm::mat4(1.0f);
-	view = glm::mat4(1.0f);
-	projection = glm::ortho(0.0f, 1920.0f, 1080.0f, 0.0f, -1.0f, 1.0f);
-
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
+	initGames();
 }
 
 void App::mainloop()
@@ -100,9 +65,9 @@ void App::mainloop()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		update();
-		upload();
-		draw();
+		updateGames();
+		uploadGames();
+		drawGames();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -114,55 +79,45 @@ void App::cleanup()
 	glfwTerminate();
 }
 
-void App::update()
+void App::initGames()
 {
-	verts = {
-		0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f
-	};
+	games = {};
 
-	model = glm::mat4(1.0f);
-	model = glm::scale(model, glm::vec3(200.0f, 200.0f, 1.0f));
+	for (int i = 0; i < gameCount; i++)
+	{
+		Game game;
+		games.push_back(game);
+	}
+
+	for (int i = 0; i < games.size(); i++)
+	{
+		games[i].id = i;
+		games[i].init();
+	}
 }
 
-void App::upload()
+void App::updateGames()
 {
-	glBindVertexArray(vao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verts.size(), verts.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(2 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindVertexArray(0);
+	for (int i = 0; i < games.size(); i++)
+	{
+		games[i].update();
+	}
 }
 
-void App::draw()
+void App::uploadGames()
 {
-	glUseProgram(shader);
-	glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	glUseProgram(0);
+	for (int i = 0; i < games.size(); i++)
+	{
+		games[i].upload();
+	}
+}
 
-	glUseProgram(shader);
-	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, verts.size() / 6);
-	glBindVertexArray(0);
-	glUseProgram(0);
+void App::drawGames()
+{
+	for (int i = 0; i < games.size(); i++)
+	{
+		games[i].draw();
+	}
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -187,6 +142,13 @@ void mouse_scroll_callback(GLFWwindow *window, double offset_x, double offset_y)
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
+	app.size = glm::ivec2((int)width, (int)height);
+
+	glViewport(0, 0, app.size.x, app.size.y);
+	for (int i = 0; i < app.games.size(); i++)
+	{
+		app.games[i].projection = glm::ortho(0.0f, (float)app.size.x, (float)app.size.y, 0.0f, -1.0f, 1.0f);
+	}
 }
 
 void APIENTRY debug_callback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char *message, const void *userParam)
