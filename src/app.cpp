@@ -31,7 +31,7 @@ void App::setup()
 	glfwSetScrollCallback(window, mouse_scroll_callback);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_BLEND);
@@ -47,30 +47,41 @@ void App::setup()
 	glfwSwapInterval(0);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-	initGames();
+	init();
 }
 
 void App::mainloop()
 {
 	while (!glfwWindowShouldClose(window))
 	{
-		if ((float)glfwGetTime() - last_frame < 1.0f / 120.0f)
-			continue;
+		if ((float)glfwGetTime() - last_tick >= 1.0f / tick_rate)
+		{
+			current_tick = (float)glfwGetTime();
+			delta_tick = current_tick - last_tick;
+			last_tick = current_tick;
 
-		current_frame = (float)glfwGetTime();
-		delta_time = current_frame - last_frame;
-		last_frame = current_frame;
+			std::cout << "dt: "<< delta_tick << "\n";
 
-		std::cout << delta_time << "\n";
+			updateGame();
+		}
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		if ((float)glfwGetTime() - last_frame >= 1.0f / frame_rate)
+		{
+			current_frame = (float)glfwGetTime();
+			delta_frame = current_frame - last_frame;
+			last_frame = current_frame;
 
-		updateGames();
-		uploadGames();
-		drawGames();
+			std::cout << "df: " << delta_frame << "\n";
 
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			updateMesh();
+			updateVAO();
+			draw();
+
+			glfwSwapBuffers(window);
+			glfwPollEvents();
+		}
 	}
 }
 
@@ -79,11 +90,11 @@ void App::cleanup()
 	glfwTerminate();
 }
 
-void App::initGames()
+void App::init()
 {
 	games = {};
 
-	for (int i = 0; i < gameCount; i++)
+	for (int i = 0; i < game_count; i++)
 	{
 		Game game;
 		games.push_back(game);
@@ -96,23 +107,31 @@ void App::initGames()
 	}
 }
 
-void App::updateGames()
+void App::updateGame()
 {
 	for (int i = 0; i < games.size(); i++)
 	{
-		games[i].update();
+		games[i].updateGame();
 	}
 }
 
-void App::uploadGames()
+void App::updateMesh()
 {
 	for (int i = 0; i < games.size(); i++)
 	{
-		games[i].upload();
+		games[i].updateMesh();
 	}
 }
 
-void App::drawGames()
+void App::updateVAO()
+{
+	for (int i = 0; i < games.size(); i++)
+	{
+		games[i].updateVAO();
+	}
+}
+
+void App::draw()
 {
 	for (int i = 0; i < games.size(); i++)
 	{
@@ -124,7 +143,43 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		glfwTerminate();
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
+		return;
+	}
+
+	if (key == GLFW_KEY_R && action == GLFW_PRESS)
+	{
+		app.games = {};
+		app.init();
+	}
+
+	if (key == GLFW_KEY_W && action == GLFW_PRESS)
+	{
+		if (app.games[0].last_move_dir != glm::ivec2(0, 1))
+		{
+			app.games[0].move_dir = glm::ivec2(0, -1);
+		}
+	}
+	if (key == GLFW_KEY_A && action == GLFW_PRESS)
+	{
+		if (app.games[0].last_move_dir != glm::ivec2(1, 0))
+		{
+			app.games[0].move_dir = glm::ivec2(-1, 0);
+		}
+	}
+	if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	{
+		if (app.games[0].last_move_dir != glm::ivec2(0, -1))
+		{
+			app.games[0].move_dir = glm::ivec2(0, 1);
+		}
+	}
+	if (key == GLFW_KEY_D && action == GLFW_PRESS)
+	{
+		if (app.games[0].last_move_dir != glm::ivec2(-1, 0))
+		{
+			app.games[0].move_dir = glm::ivec2(1, 0);
+		}
 	}
 }
 

@@ -16,19 +16,26 @@ public:
 
 	float current_frame = 0.0f;
 	float last_frame = 0.0f;
-	float delta_time = 0.0f;
+	float delta_frame = 0.0f;
+	float frame_rate = 120.0f;
+
+	float current_tick = 0.0f;
+	float last_tick = 0.0f;
+	float delta_tick = 0.0f;
+	float tick_rate = 12.0f;
 
 	std::vector<Game> games;
-	int gameCount = 20;
+	int game_count = 20;
 
 	void setup();
 	void mainloop();
 	void cleanup();
 
-	void initGames();
-	void updateGames();
-	void uploadGames();
-	void drawGames();
+	void init();
+	void updateGame();
+	void updateMesh();
+	void updateVAO();
+	void draw();
 };
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
