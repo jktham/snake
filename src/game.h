@@ -18,12 +18,13 @@ public:
 
 	glm::ivec2 grid_size = glm::ivec2(20, 20);
 	glm::ivec2 fruit_pos = glm::ivec2(0, 0);
-	std::deque<glm::ivec2> snake_pos;
+	std::deque<glm::ivec2> snake_pos = {glm::ivec2(0, 0)};
 	glm::ivec2 move_dir = glm::ivec2(0, 0);
 	glm::ivec2 last_move_dir = glm::ivec2(0, 0);
 	int points = 0;
 	bool dead = false;
 	bool grow = false;
+	bool paused = true;
 
 	GLuint shader;
 	GLuint vao;
@@ -36,7 +37,8 @@ public:
 	std::vector<float> mesh;
 
 	void init();
-	void updateGame();
+	void start();
+	void updateState();
 	void updateMesh();
 	void updateVAO();
 	void draw();

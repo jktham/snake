@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game.h"
+#include "menu.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -27,12 +28,15 @@ public:
 	std::vector<Game> games;
 	int game_count = 20;
 
+	Menu menu;
+
 	void setup();
 	void mainloop();
 	void cleanup();
 
 	void init();
-	void updateGame();
+	void start();
+	void updateState();
 	void updateMesh();
 	void updateVAO();
 	void draw();

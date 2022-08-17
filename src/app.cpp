@@ -38,7 +38,7 @@ void App::setup()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glLineWidth(1.0f);
 	glPointSize(1.0f);
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(debug_callback, nullptr);
@@ -62,7 +62,7 @@ void App::mainloop()
 
 			std::cout << "dt: "<< delta_tick << "\n";
 
-			updateGame();
+			updateState();
 		}
 
 		if ((float)glfwGetTime() - last_frame >= 1.0f / frame_rate)
@@ -105,14 +105,27 @@ void App::init()
 		games[i].id = i;
 		games[i].init();
 	}
+
+	Menu m;
+	menu = m;
+	menu.init();
 }
 
-void App::updateGame()
+void App::start()
+{
+	for (int i = 0; i < game_count; i++)
+	{
+		games[i].start();
+	}
+}
+
+void App::updateState()
 {
 	for (int i = 0; i < games.size(); i++)
 	{
-		games[i].updateGame();
+		games[i].updateState();
 	}
+	menu.updateState();
 }
 
 void App::updateMesh()
@@ -121,6 +134,7 @@ void App::updateMesh()
 	{
 		games[i].updateMesh();
 	}
+	menu.updateMesh();
 }
 
 void App::updateVAO()
@@ -129,6 +143,7 @@ void App::updateVAO()
 	{
 		games[i].updateVAO();
 	}
+	menu.updateVAO();
 }
 
 void App::draw()
@@ -137,6 +152,7 @@ void App::draw()
 	{
 		games[i].draw();
 	}
+	menu.draw();
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -151,6 +167,11 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 	{
 		app.games = {};
 		app.init();
+	}
+
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		app.start();
 	}
 
 	if (key == GLFW_KEY_W && action == GLFW_PRESS)
@@ -204,6 +225,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 	{
 		app.games[i].projection = glm::ortho(0.0f, (float)app.size.x, (float)app.size.y, 0.0f, -1.0f, 1.0f);
 	}
+	app.menu.projection = glm::ortho(0.0f, (float)app.size.x, (float)app.size.y, 0.0f, -1.0f, 1.0f);
 }
 
 void APIENTRY debug_callback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char *message, const void *userParam)

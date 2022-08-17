@@ -60,11 +60,21 @@ void Game::init()
 
 	fruit_pos = glm::ivec2(std::rand() % grid_size.x, std::rand() % grid_size.y);
 	snake_pos = {glm::ivec2(0, 0)};
+	if (fruit_pos == snake_pos[0])
+	{
+		fruit_pos = glm::ivec2(1, 0);
+	}
+	move_dir = glm::ivec2(1, 0);
 }
 
-void Game::updateGame()
+void Game::start()
 {
-	if (dead)
+	paused = false;
+}
+
+void Game::updateState()
+{
+	if (dead || paused)
 		return;
 
 	snake_pos.push_front(snake_pos[0] + move_dir);
@@ -129,6 +139,9 @@ void Game::updateMesh()
 
 		if (grow)
 			scol = glm::vec4(0.0f, 0.0f, 1.0f, 0.8f);
+		
+		if (paused)
+			scol = glm::vec4(0.5f, 0.5f, 0.5f, 0.8f);
 
 		std::vector<float> snake_mesh = {
 			spos.x, 		 spos.y, 		  scol.r, scol.g, scol.b, scol.a,
@@ -141,7 +154,7 @@ void Game::updateMesh()
 		mesh.insert(mesh.end(), snake_mesh.begin(), snake_mesh.end());
 	}
 
-	int columns = (app.size.x - border.x) / (size.x + border.x);
+	int columns = (app.size.x - border.x - app.menu.width) / (size.x + border.x);
 	int x = id % columns;
 	int y = id / columns;
 	position = glm::ivec2(x * size.x + (x+1) * border.x, y * size.y + (y+1) * border.y);
