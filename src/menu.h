@@ -24,6 +24,8 @@ public:
 	std::vector<float> mesh;
 
 	std::vector<Element*> elements;
+
+	glm::vec2 cursor = glm::vec2(0, 0);
 	
 	void init();
 	void updateState();

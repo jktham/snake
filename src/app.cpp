@@ -74,7 +74,8 @@ void App::mainloop()
 			std::cout << "df: " << delta_frame << "\n";
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+			
+			menu.updateState();
 			updateMesh();
 			updateVAO();
 			draw();
@@ -109,14 +110,19 @@ void App::init()
 	Menu m;
 	menu = m;
 	menu.init();
+
+	paused = true;
 }
 
-void App::start()
+void App::reset()
 {
-	for (int i = 0; i < game_count; i++)
-	{
-		games[i].start();
-	}
+	games = {};
+	init();
+}
+
+void App::pause()
+{
+	paused = !paused;
 }
 
 void App::updateState()
@@ -125,7 +131,7 @@ void App::updateState()
 	{
 		games[i].updateState();
 	}
-	menu.updateState();
+	//menu.updateState();
 }
 
 void App::updateMesh()
@@ -165,13 +171,12 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
-		app.games = {};
-		app.init();
+		app.reset();
 	}
 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
-		app.start();
+		app.pause();
 	}
 
 	if (key == GLFW_KEY_W && action == GLFW_PRESS)
@@ -206,10 +211,19 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 {
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		app.click = true;
+	}
+	else
+	{
+		app.click = false;
+	}
 }
 
 void mouse_cursor_callback(GLFWwindow *window, double pos_x, double pos_y)
 {
+	app.cursor = glm::vec2((float)pos_x, (float)pos_y);
 }
 
 void mouse_scroll_callback(GLFWwindow *window, double offset_x, double offset_y)

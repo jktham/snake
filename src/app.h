@@ -18,24 +18,29 @@ public:
 	float current_frame = 0.0f;
 	float last_frame = 0.0f;
 	float delta_frame = 0.0f;
-	float frame_rate = 120.0f;
+	float frame_rate = 60.0f;
 
 	float current_tick = 0.0f;
 	float last_tick = 0.0f;
 	float delta_tick = 0.0f;
-	float tick_rate = 12.0f;
+	float tick_rate = 10.0f;
 
 	std::vector<Game> games;
 	int game_count = 20;
+	bool paused = true;
 
 	Menu menu;
+
+	glm::vec2 cursor = glm::vec2(0, 0);
+	bool click = false;
 
 	void setup();
 	void mainloop();
 	void cleanup();
 
 	void init();
-	void start();
+	void reset();
+	void pause();
 	void updateState();
 	void updateMesh();
 	void updateVAO();

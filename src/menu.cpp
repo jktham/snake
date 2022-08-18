@@ -10,6 +10,8 @@
 
 #include <vector>
 #include <fstream>
+#include <functional>
+#include <iostream>
 
 void Menu::init()
 {
@@ -51,14 +53,47 @@ void Menu::init()
 	projection = glm::ortho(0.0f, app.size.x, app.size.y, 0.0f, -1.0f, 1.0f);
 
 	Quad* quad = new Quad;
-	quad->position = glm::vec2(100, 100);
-	quad->size = glm::vec2(100, 100);
+	quad->position = glm::vec2(0, 0);
+	quad->size = glm::vec2(200, 10);
 	elements.push_back(quad);
+
+	Button* button = new Button;
+	button->position = glm::vec2(100, 100);
+	button->size = glm::vec2(100, 100);
+	button->action = [](){app.pause();};
+	elements.push_back(button);
+
+	button = new Button;
+	button->position = glm::vec2(200, 100);
+	button->size = glm::vec2(100, 100);
+	button->action = [](){app.reset();};
+	elements.push_back(button);
 }
 
 void Menu::updateState()
 {
+	cursor = app.cursor - glm::vec2(app.size.x - size.x, 0);
 
+	for (int i = 0; i < elements.size(); i++)
+	{
+		if (cursor.x >= elements[i]->position.x && cursor.y >= elements[i]->position.y && cursor.x <= elements[i]->position.x + elements[i]->size.x && cursor.y <= elements[i]->position.y + elements[i]->size.y)
+		{
+			if (app.click == true)
+			{
+				elements[i]->click();
+				elements[i]->action();
+				app.click = false;
+			}
+			else
+			{
+				elements[i]->hover();
+			}
+		}
+		else
+		{
+			elements[i]->reset();
+		}
+	}
 }
 
 void Menu::updateMesh()

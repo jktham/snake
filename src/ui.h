@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <vector>
+#include <functional>
 
 class Element
 {
@@ -17,11 +18,27 @@ public:
 
 	std::vector<float> mesh = {};
 
+	std::function<void()> action = [](){};
+
+	virtual void hover();
+	virtual void click();
+	virtual void reset();
+
 	virtual void generateMesh();
 };
 
 class Quad: public Element
 {
 public:
+	virtual void generateMesh();
+};
+
+class Button: public Element
+{
+public:
+	virtual void hover();
+	virtual void click();
+	virtual void reset();
+
 	virtual void generateMesh();
 };

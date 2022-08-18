@@ -24,7 +24,6 @@ public:
 	int points = 0;
 	bool dead = false;
 	bool grow = false;
-	bool paused = true;
 
 	GLuint shader;
 	GLuint vao;
@@ -37,7 +36,6 @@ public:
 	std::vector<float> mesh;
 
 	void init();
-	void start();
 	void updateState();
 	void updateMesh();
 	void updateVAO();

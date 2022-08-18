@@ -68,17 +68,11 @@ void Game::init()
 
 	dead = false;
 	grow = false;
-	paused = true;
-}
-
-void Game::start()
-{
-	paused = false;
 }
 
 void Game::updateState()
 {
-	if (dead || paused)
+	if (dead || app.paused)
 		return;
 
 	snake_pos.push_front(snake_pos[0] + move_dir);
@@ -144,7 +138,7 @@ void Game::updateMesh()
 		if (grow)
 			scol = glm::vec4(0.0f, 0.0f, 1.0f, 0.8f);
 		
-		if (paused)
+		if (app.paused)
 			scol = glm::vec4(0.5f, 0.5f, 0.5f, 0.8f);
 
 		std::vector<float> snake_mesh = {
