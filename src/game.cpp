@@ -156,6 +156,7 @@ void Game::updateMesh()
 	int x = id % columns;
 	int y = id / columns;
 	position = glm::ivec2(x * size.x + (x+1) * border.x, y * size.y + (y+1) * border.y);
+	position.y += app.scroll * (size.y / 4.0f + border.y / 4.0f);
 
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(position.x, position.y, 0.0f));

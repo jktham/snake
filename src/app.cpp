@@ -44,7 +44,7 @@ void App::setup()
 	glDebugMessageCallback(debug_callback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
-	glfwSwapInterval(0);
+	glfwSwapInterval(1);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 	init();
@@ -228,6 +228,11 @@ void mouse_cursor_callback(GLFWwindow *window, double pos_x, double pos_y)
 
 void mouse_scroll_callback(GLFWwindow *window, double offset_x, double offset_y)
 {
+	app.scroll += offset_y;
+	if (app.scroll > 0.0f)
+	{
+		app.scroll = 0.0f;
+	}
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)

@@ -26,8 +26,9 @@ public:
 	float tick_rate = 10.0f;
 
 	std::vector<Game> games;
-	int game_count = 20;
+	int game_count = 100;
 	bool paused = true;
+	float scroll = 0.0f;
 
 	Menu menu;
 
