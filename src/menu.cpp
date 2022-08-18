@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "ui.h"
 #include "global.h"
 
 #include <glad/glad.h>
@@ -47,7 +48,12 @@ void Menu::init()
 
 	model = glm::mat4(1.0f);
 	view = glm::mat4(1.0f);
-	projection = glm::ortho(0.0f, (float)app.size.x, (float)app.size.y, 0.0f, -1.0f, 1.0f);
+	projection = glm::ortho(0.0f, app.size.x, app.size.y, 0.0f, -1.0f, 1.0f);
+
+	Quad* quad = new Quad;
+	quad->position = glm::vec2(100, 100);
+	quad->size = glm::vec2(100, 100);
+	elements.push_back(quad);
 }
 
 void Menu::updateState()
@@ -58,22 +64,29 @@ void Menu::updateState()
 void Menu::updateMesh()
 {
 	mesh = {};
-	
+
+	size.y = app.size.y;
+
 	glm::vec4 mcol = glm::vec4(0.0f, 0.0f, 0.0f, 0.8f);
 
 	std::vector<float> menu_mesh = {
-		0.0f, 0.0f, mcol.r, mcol.g, mcol.b, mcol.a,
-		0.0f, 1.0f, mcol.r, mcol.g, mcol.b, mcol.a,
-		1.0f, 1.0f, mcol.r, mcol.g, mcol.b, mcol.a,
-		0.0f, 0.0f, mcol.r, mcol.g, mcol.b, mcol.a,
-		1.0f, 1.0f, mcol.r, mcol.g, mcol.b, mcol.a,
-		1.0f, 0.0f, mcol.r, mcol.g, mcol.b, mcol.a
+		0.0f,   0.0f,	mcol.r, mcol.g, mcol.b, mcol.a,
+		0.0f,   size.y, mcol.r, mcol.g, mcol.b, mcol.a,
+		size.x, size.y, mcol.r, mcol.g, mcol.b, mcol.a,
+		0.0f,   0.0f,	mcol.r, mcol.g, mcol.b, mcol.a,
+		size.x, size.y, mcol.r, mcol.g, mcol.b, mcol.a,
+		size.x, 0.0f, 	mcol.r, mcol.g, mcol.b, mcol.a
 	};
 	mesh.insert(mesh.end(), menu_mesh.begin(), menu_mesh.end());
 
+	for (int i = 0; i < elements.size(); i++)
+	{
+		elements[i]->generateMesh();
+		mesh.insert(mesh.end(), elements[i]->mesh.begin(), elements[i]->mesh.end());
+	}
+
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(app.size.x - width, 0.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(width, app.size.y, 1.0f));
+	model = glm::translate(model, glm::vec3(app.size.x - size.x, 0.0f, 0.0f));
 }
 
 void Menu::updateVAO()

@@ -12,9 +12,9 @@ class Game
 public:
 	int id;
 
-	glm::ivec2 size = glm::ivec2(200, 200);
-	glm::ivec2 position = glm::ivec2(0, 0);
-	glm::ivec2 border = glm::ivec2(10, 10);
+	glm::vec2 size = glm::vec2(200, 200);
+	glm::vec2 position = glm::vec2(0, 0);
+	glm::vec2 border = glm::vec2(10, 10);
 
 	glm::ivec2 grid_size = glm::ivec2(20, 20);
 	glm::ivec2 fruit_pos = glm::ivec2(0, 0);

@@ -218,14 +218,14 @@ void mouse_scroll_callback(GLFWwindow *window, double offset_x, double offset_y)
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
-	app.size = glm::ivec2((int)width, (int)height);
+	app.size = glm::vec2(width, height);
 
 	glViewport(0, 0, app.size.x, app.size.y);
 	for (int i = 0; i < app.games.size(); i++)
 	{
-		app.games[i].projection = glm::ortho(0.0f, (float)app.size.x, (float)app.size.y, 0.0f, -1.0f, 1.0f);
+		app.games[i].projection = glm::ortho(0.0f, app.size.x, app.size.y, 0.0f, -1.0f, 1.0f);
 	}
-	app.menu.projection = glm::ortho(0.0f, (float)app.size.x, (float)app.size.y, 0.0f, -1.0f, 1.0f);
+	app.menu.projection = glm::ortho(0.0f, app.size.x, app.size.y, 0.0f, -1.0f, 1.0f);
 }
 
 void APIENTRY debug_callback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char *message, const void *userParam)

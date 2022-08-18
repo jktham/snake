@@ -13,7 +13,7 @@ class App
 {
 public:
 	GLFWwindow* window;
-	glm::ivec2 size = glm::ivec2(1920, 1080);
+	glm::vec2 size = glm::vec2(1920, 1080);
 
 	float current_frame = 0.0f;
 	float last_frame = 0.0f;

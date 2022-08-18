@@ -47,7 +47,7 @@ void Game::init()
 
 	model = glm::mat4(1.0f);
 	view = glm::mat4(1.0f);
-	projection = glm::ortho(0.0f, (float)app.size.x, (float)app.size.y, 0.0f, -1.0f, 1.0f);
+	projection = glm::ortho(0.0f, app.size.x, app.size.y, 0.0f, -1.0f, 1.0f);
 	
 	mesh = {
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -65,6 +65,10 @@ void Game::init()
 		fruit_pos = glm::ivec2(1, 0);
 	}
 	move_dir = glm::ivec2(1, 0);
+
+	dead = false;
+	grow = false;
+	paused = true;
 }
 
 void Game::start()
@@ -154,7 +158,7 @@ void Game::updateMesh()
 		mesh.insert(mesh.end(), snake_mesh.begin(), snake_mesh.end());
 	}
 
-	int columns = (app.size.x - border.x - app.menu.width) / (size.x + border.x);
+	int columns = (app.size.x - border.x - app.menu.size.x) / (size.x + border.x);
 	int x = id % columns;
 	int y = id / columns;
 	position = glm::ivec2(x * size.x + (x+1) * border.x, y * size.y + (y+1) * border.y);

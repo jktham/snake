@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ui.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -9,7 +11,7 @@
 class Menu
 {
 public:
-	int width = 400;
+	glm::vec2 size = glm::vec2(400, 0);
 
 	GLuint shader;
 	GLuint vao;
@@ -20,6 +22,8 @@ public:
 	glm::mat4 projection;
 
 	std::vector<float> mesh;
+
+	std::vector<Element*> elements;
 	
 	void init();
 	void updateState();
